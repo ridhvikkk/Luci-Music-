@@ -37,7 +37,8 @@ module.exports = {
       .setDescription('Thank you for choosing Luci Music!\n\n- Here are the available commands:\n\n' +
         '**/play :** Start playing the songs.\n' +
         '**/ping :** Check bot latency.\n' +
-        '**/support :** Display support server info');
+        '**/support :** Display support server info.\n' +
+        '**/features :** Compare how this bot is better than other music bots.);
 
       return interaction.reply({ embeds: [embed] });
     } catch (e) {
