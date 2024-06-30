@@ -1,7 +1,16 @@
 const config = require('./config.js');
 require("./bot.js");
 
-/*
+//server join/leave logging
+client.on(Events.GuildCreate, async guild -> {
+const channel = await client.channels.cache.get('1256955078695190647');
+const name = guild.name;
+const memberCount = guild.memberCount;
+const owner
+const embed = new EmbedBuilder()
+.setColor("Green")
+
+  /*
 
   ________.__                        _____.___.___________
  /  _____/|  | _____    ____  ____   \__  |   |\__    ___/
