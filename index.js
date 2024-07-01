@@ -2,67 +2,59 @@ const config = require('./config.js');
 require("./bot.js");
 
 //server join
-client.on(Events.GuildCreate, async guild => {
-const channel = await client.channels.cache.get('1256955078695190647');
+const {  Events, ButtonBuilder, EmbedBuilder, ButtonStyle, ActionRowBuilder, ComponenType, ChannelType }
+
+module.exports = {
+name: Events.GuildCreate,
+async execute (guild, client) {
+
+  if (!guild) return;
+
+const sendChannel = await client.channels.fetch('1256955078695190647');
 const name = guild.name;
-const memberCount = guild.memberCount;
-const owner = guild.ownerId;
-const owner = await client.users.cache.get(ownerID);
-const ownerName = owner.username;
+const id = guild.id;
+const memberCount = await guild.members.cache.size;
+const owner = await guild.members.fetch(guild.ownerId;
+const clientGuildCount = await client.guilds.cache.size;
+}
 
 const embed = new EmbedBuilder()
 .setColor("Green")
-.setTitle('New Server Joined')
-.addFields({ nme: 'Server Name', value: `> ${name}`})
-.addFields({ nme: 'Server Members', value: `> ${memberCount}`})
-.addFields({ nme: 'Server Owner', value: `> ${owner}`})
-.addFields({ nme: 'Server Age', value: `> <t:${parseInt(guild.createdTimestamp / 1000)}:R>`})
-.setTimestamp()
-.setFooter({ text: 'Guild Join'})
+.setTitle('**New Server Joined**')
+.addFields({ nme: 'Server Name', value: `\`${name}\``})
+.addFields({ nme: 'Server ID', value: `> ${id}`})
+.addFields({ nme: 'Server Owner', value: `> ${owner.user.username} ($(owner.id})\``})
+.addFields({ nme: 'Server Member Count', value: `\`${memberCount}\``})
+.setDescription(`This is my \`${clientGuildCount}\` server that I am in. Use the button below to fetch the invite link to this guild.`)
+.setTimestamp();
 
-await channel.send({ embed: [embed] });
+const button = new ButtonBuilder()
+.setCustomId('fetchInviteforJoin')
+.setLabel(`Fetch Invite`)
+.setStyle(ButtonStyle.Danger);
 
-//server left
-client.on(Events.GuildDelete async guild => {
-const channel = await client.channels.cache.get('1256955078695190647');
-const name = guild.name;
-const memberCount = guild.memberCount;
-const owner = guild.ownerId;
-const owner = await client.users.cache.get(ownerID);
-const ownerName = owner.username;
+const row = new ActionRowBuilder()
+.addComponents(
+button
+);
 
-const embed = new EmbedBuilder()
-.setColor("Green")
-.setTitle('Server left! :(')
-.addFields({ nme: 'Server Name', value: `> ${name}`})
-.addFields({ nme: 'Server Members', value: `> ${memberCount}`})
-.addFields({ nme: 'Server Owner', value: `> ${owner}`})
-.addFields({ nme: 'Server Age', value: `> <t:${parseInt(guild.createdTimestamp / 1000)}:R>`})
-.setTimestamp()
-.setFooter({ text: 'Guild Leave'})
+const msg= await sendChannel.send({ embeds:[embed], components: [row] }).catch(err => {});
 
-await channel.send({ embed: [embed] });
+var time = 300000;
+const collector = await msg.createMessageComponentCollector({
+  componentType: ComponentType.Button,
+  time
+});
 
-
-
-  /*
-
-  ________.__                        _____.___.___________
- /  _____/|  | _____    ____  ____   \__  |   |\__    ___/
-/   \  ___|  | \__  \ _/ ___\/ __ \   /   |   |  |    |   
-\    \_\  \  |__/ __ \\  \__\  ___/   \____   |  |    |   
- \______  /____(____  /\___  >___  >  / ______|  |____|   
-        \/          \/     \/    \/   \/                  
-
-╔════════════════════════════════════════════════════════════════════════╗
-║                                                                        ║
-║  ## Created by GlaceYT!                                                ║
-║  ## Feel free to utilize any portion of the code                       ║
-║  ## DISCORD :  https://discord.com/invite/xQF9f9yUEM                   ║
-║  ## YouTube : https://www.youtube.com/@GlaceYt                         ║
-║                                                                        ║
-╚════════════════════════════════════════════════════════════════════════╝
-
-
-*/
-
+collector.on('collect', async i => {
+  if (i.customId == 'fetchInviteforJoin') {
+    var channel;
+    const channels = await guild.channels.cache.filter(c => c.type === ChannelType.GuildText);
+    for (const c of channels.values()) {
+      channel = c;
+      break;
+    }
+    if (!channel) return await i.reply({ content: `:( Sorry, I couldn't find any channels in this server to create an invite to the server.`, ephemeral: true});
+    const invite = await channel.createInvite().catch(err => {})
+  }
+})
